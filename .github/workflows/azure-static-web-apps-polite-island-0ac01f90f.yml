@@ -17,6 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          app_build_command: "npm run build"
           submodules: true
           lfs: false
       - name: Build And Deploy
@@ -44,6 +45,7 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_ISLAND_0AC01F90F }}
           action: "close"
+
 
 
 
