@@ -64,43 +64,85 @@ export default function Home() {
       : null;
 
   return (
-    <main
-  style={{
-    maxWidth: 980,
-    margin: "40px auto",
-    padding: "24px",
-    fontFamily: "system-ui",
-    background: "#ffffffff",
-    color: "#111827",
-    borderRadius: 12,
-    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-  }}
->
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12 px-4">
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+          50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
+        }
+        @keyframes gradient-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .glass {
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-border {
+          position: relative;
+        }
+        .glow-border::before {
+          content: '';
+          position: absolute;
+          inset: -2px;
+          border-radius: inherit;
+          padding: 2px;
+          background: linear-gradient(45deg, #a855f7, #ec4899, #8b5cf6, #a855f7);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+        .glow-border:hover::before {
+          opacity: 1;
+        }
+        .animated-bg {
+          background: linear-gradient(270deg, #a855f7, #ec4899, #8b5cf6);
+          background-size: 600% 600%;
+          animation: gradient-shift 3s ease infinite;
+        }
+      `}</style>
 
-      <h1 style={{ marginBottom: 6 }}>FGSM Adversarial Attack Demo</h1>
-      <p style={{ marginTop: 0, color: "#444" }}>
-        Upload a digit image, set epsilon, and compare the model’s clean vs adversarial predictions.
-      </p>
+      <main className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 mb-4 animate-pulse">
+            FGSM Attack Lab
+          </h1>
+          <p className="text-xl text-purple-200">
+            Unleash adversarial perturbations and fool neural networks
+          </p>
+        </div>
 
-      <section style={{ border: "1px solid #919191ff", borderRadius: 10, padding: 16 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          <div>
-            <label style={{ fontWeight: 600 }}>Upload image (PNG/JPEG)</label>
-            <div style={{ marginTop: 8 }}>
-              <input
-                type="file"
-                accept="image/png,image/jpeg"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-              />
+        <div className="glass rounded-3xl p-8 mb-8 glow-border">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <label className="block text-lg font-semibold text-purple-200 mb-3">
+                🖼️ Upload Image
+              </label>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  className="block w-full text-sm text-purple-200 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-purple-500 file:to-pink-500 file:text-white hover:file:scale-105 file:transition-transform file:cursor-pointer cursor-pointer"
+                />
+              </div>
+              <p className="text-purple-300 text-sm mt-3">
+                💡 Clear handwritten digits work best
+              </p>
             </div>
-            <p style={{ color: "#666", marginTop: 10, fontSize: 13 }}>
-              Tip: a clear handwritten digit on white background usually works best.
-            </p>
-          </div>
 
-          <div>
-            <label style={{ fontWeight: 600 }}>Epsilon: {epsilon.toFixed(2)}</label>
-            <div style={{ marginTop: 8 }}>
+            <div>
+              <label className="block text-lg font-semibold text-purple-200 mb-3">
+                ⚡ Epsilon: {epsilon.toFixed(2)}
+              </label>
               <input
                 type="range"
                 min="0"
@@ -108,118 +150,120 @@ export default function Home() {
                 step="0.01"
                 value={epsilon}
                 onChange={(e) => setEpsilon(Number(e.target.value))}
-                style={{ width: "100%" }}
+                className="w-full h-2 bg-purple-900 rounded-lg appearance-none cursor-pointer accent-pink-500"
               />
-            </div>
-            <div style={{ marginTop: 8, display: "flex", gap: 8, alignItems: "center" }}>
-              <input
-                type="number"
-                min="0"
-                max="0.4"
-                step="0.01"
-                value={epsilon}
-                onChange={(e) => setEpsilon(Number(e.target.value))}
-                style={{ width: 110, padding: 6 }}
-              />
-              <span style={{ color: "#666", fontSize: 13 }}>(0.00 – 0.40)</span>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 16 }}>
-          <button
-  onClick={runAttack}
-  disabled={loading}
-  style={{
-    padding: "12px 20px",
-    borderRadius: 8,
-    border: "none",
-    background: loading ? "#9ca3af" : "#2563eb",
-    color: "#ffffff",
-    cursor: loading ? "not-allowed" : "pointer",
-    fontWeight: 700,
-    fontSize: 15,
-    boxShadow: "0 4px 12px rgba(37,99,235,0.4)",
-  }}
->
-
-            {loading ? "Running attack..." : "Run FGSM Attack"}
-          </button>
-        </div>
-
-        {error && (
-          <div style={{ marginTop: 12, color: "crimson", fontWeight: 600 }}>
-            {error}
-          </div>
-        )}
-      </section>
-
-      {resp && (
-        <section
-  style={{
-    marginTop: 24,
-    border: "1px solid #e5e7eb",
-    borderRadius: 12,
-    padding: 20,
-    background: "#ffffff",
-  }}
->
-
-          <h2 style={{ marginTop: 0 }}>Results</h2>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <div>
-              <div><b>Clean prediction:</b> {resp.clean_prediction}</div>
-              <div><b>Adversarial prediction:</b> {resp.adversarial_prediction}</div>
-              <div><b>Attack success:</b> {String(resp.attack_success)}</div>
-              <div><b>Epsilon:</b> {resp.epsilon}</div>
-            </div>
-
-            <div style={{ color: "#444" }}>
-              <b>Backend:</b> {apiBase}
-              <div style={{ fontSize: 13, color: "#666", marginTop: 6 }}>
-                
+              <div className="flex gap-4 items-center mt-4">
+                <input
+                  type="number"
+                  min="0"
+                  max="0.4"
+                  step="0.01"
+                  value={epsilon}
+                  onChange={(e) => setEpsilon(Number(e.target.value))}
+                  className="w-32 px-4 py-2 bg-purple-900/50 border border-purple-500/30 rounded-lg text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <span className="text-purple-300 text-sm">Range: 0.00 – 0.40</span>
               </div>
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: 24, marginTop: 16, flexWrap: "wrap" }}>
-            <div>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Original</div>
-              {cleanPreviewUrl ? (
-                <img
-                  src={cleanPreviewUrl}
-                  alt="Original"
-                  width={240}
-                  height={240}
-                  style={{ border: "1px solid #ccc", borderRadius: 8, imageRendering: "pixelated" }}
-                />
-              ) : (
-                <div style={{ color: "#666" }}>No image</div>
-              )}
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={runAttack}
+              disabled={loading}
+              className={`relative px-10 py-4 rounded-full text-white font-bold text-lg overflow-hidden transition-all ${
+                loading
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "animated-bg hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50"
+              }`}
+            >
+              <span className="relative z-10">
+                {loading ? "🔄 Attacking..." : "🚀 Launch Attack"}
+              </span>
+            </button>
+          </div>
+
+          {error && (
+            <div className="mt-6 p-4 bg-red-500/20 border border-red-500 rounded-xl text-red-200 text-center font-semibold">
+              ⚠️ {error}
+            </div>
+          )}
+        </div>
+
+        {resp && (
+          <div className="glass rounded-3xl p-8 glow-border animate-fade-in">
+            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 mb-6">
+              ✨ Attack Results
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="glass rounded-2xl p-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-purple-200">Clean Prediction:</span>
+                  <span className="text-2xl font-bold text-green-400">{resp.clean_prediction}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-purple-200">Adversarial Prediction:</span>
+                  <span className="text-2xl font-bold text-orange-400">{resp.adversarial_prediction}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-purple-200">Attack Success:</span>
+                  <span className={`text-xl font-bold ${resp.attack_success ? 'text-red-400' : 'text-gray-400'}`}>
+                    {resp.attack_success ? '✅ YES' : '❌ NO'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-purple-200">Epsilon Used:</span>
+                  <span className="text-xl font-bold text-purple-400">{resp.epsilon}</span>
+                </div>
+              </div>
+
+              <div className="glass rounded-2xl p-6">
+                <div className="text-purple-200 font-semibold mb-2">🔗 Backend</div>
+                <div className="text-purple-300 text-sm break-all">{apiBase}</div>
+              </div>
             </div>
 
-            <div>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Adversarial</div>
-              {advPreviewUrl ? (
-                <img
-                  src={advPreviewUrl}
-                  alt="Adversarial"
-                  width={240}
-                  height={240}
-                  style={{ border: "1px solid #ccc", borderRadius: 8, imageRendering: "pixelated" }}
-                />
-              ) : (
-                <div style={{ color: "#666" }}>No adversarial image returned</div>
-              )}
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="text-center">
+                <div className="text-xl font-bold text-purple-200 mb-4">🎯 Original Image</div>
+                {cleanPreviewUrl ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={cleanPreviewUrl}
+                      alt="Original"
+                      className="w-64 h-64 object-contain border-4 border-purple-500 rounded-2xl shadow-2xl hover:scale-105 transition-transform"
+                      style={{ imageRendering: "pixelated" }}
+                    />
+                  </div>
+                ) : (
+                  <div className="text-purple-300">No image</div>
+                )}
+              </div>
+
+              <div className="text-center">
+                <div className="text-xl font-bold text-pink-400 mb-4">⚔️ Adversarial Image</div>
+                {advPreviewUrl ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={advPreviewUrl}
+                      alt="Adversarial"
+                      className="w-64 h-64 object-contain border-4 border-pink-500 rounded-2xl shadow-2xl hover:scale-105 transition-transform"
+                      style={{ imageRendering: "pixelated" }}
+                    />
+                  </div>
+                ) : (
+                  <div className="text-purple-300">No adversarial image</div>
+                )}
+              </div>
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      <footer style={{ marginTop: 20, color: "#777", fontSize: 12 }}>
-        Note: FGSM success depends on the input and epsilon. Some images may require a higher epsilon to flip the prediction.
-      </footer>
-    </main>
+        <footer className="text-center mt-12 text-purple-300 text-sm">
+          💫 FGSM success depends on input image and epsilon value. Experiment with different settings for optimal results.
+        </footer>
+      </main>
+    </div>
   );
 }
