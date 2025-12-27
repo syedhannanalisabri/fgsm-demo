@@ -17,7 +17,7 @@ export default function Home() {
   const [resp, setResp] = useState<AttackResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const apiBase = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+  const apiBase = process.env.NEXT_PUBLIC_API_BASE || "https://fgsm-backend-syedh-01.azurewebsites.net/docs#/default/attack_attack_post";
 
   const cleanPreviewUrl = useMemo(() => {
     if (!file) return null;
@@ -178,7 +178,7 @@ export default function Home() {
             <div style={{ color: "#444" }}>
               <b>Backend:</b> {apiBase}
               <div style={{ fontSize: 13, color: "#666", marginTop: 6 }}>
-                If you deploy later, update <code>.env.local</code> (or Amplify env vars) to point to the deployed API.
+                
               </div>
             </div>
           </div>
