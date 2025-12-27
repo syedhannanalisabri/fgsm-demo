@@ -1,0 +1,33 @@
+# ---- Python ----
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.Python
+**/.venv/
+**/venv/
+**/ENV/
+**/.env/
+**/.mypy_cache/
+**/.pytest_cache/
+**/.ruff_cache/
+
+# ---- Jupyter / misc ----
+.ipynb_checkpoints/
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Node / Next.js ----
+**/node_modules/
+**/.next/
+**/out/
+**/.vercel/
+
+# ---- Data / artifacts you should not commit ----
+backend/data/
+**/*.pt.tmp
+
+# ---- Logs ----
+*.log
