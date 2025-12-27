@@ -26,8 +26,6 @@ export default function Home() {
 
   async function runAttack() {
     setError(null);
-    setResp(null);
-
     if (!file) {
       setError("Please upload an image first.");
       return;
@@ -58,91 +56,47 @@ export default function Home() {
     }
   }
 
-  const advPreviewUrl =
-    resp?.adversarial_image_base64
-      ? `data:image/png;base64,${resp.adversarial_image_base64}`
-      : null;
+  const advPreviewUrl = resp?.adversarial_image_base64
+    ? `data:image/png;base64,${resp.adversarial_image_base64}`
+    : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12 px-4">
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-          50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
-        }
-        @keyframes gradient-shift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .glass {
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .glow-border {
-          position: relative;
-        }
-        .glow-border::before {
-          content: '';
-          position: absolute;
-          inset: -2px;
-          border-radius: inherit;
-          padding: 2px;
-          background: linear-gradient(45deg, #a855f7, #ec4899, #8b5cf6, #a855f7);
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-        .glow-border:hover::before {
-          opacity: 1;
-        }
-        .animated-bg {
-          background: linear-gradient(270deg, #a855f7, #ec4899, #8b5cf6);
-          background-size: 600% 600%;
-          animation: gradient-shift 3s ease infinite;
-        }
-      `}</style>
+    <main style={styles.container}>
+      <div style={styles.wrapper}>
+        {/* Header */}
+        <header style={styles.header}>
+          <div style={styles.logoBadge}>⚡</div>
+          <div>
+            <h1 style={styles.title}>FGSM ADVERSARIAL LAB</h1>
+            <p style={styles.subtitle}>Explore Fast Gradient Sign Method attacks on neural networks</p>
+          </div>
+        </header>
 
-      <main className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 mb-4 animate-pulse">
-            FGSM Attack Lab
-          </h1>
-          <p className="text-xl text-purple-200">
-            Unleash adversarial perturbations and fool neural networks
-          </p>
-        </div>
-
-        <div className="glass rounded-3xl p-8 mb-8 glow-border">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <label className="block text-lg font-semibold text-purple-200 mb-3">
-                🖼️ Upload Image
-              </label>
-              <div className="relative">
+        <div style={styles.mainGrid}>
+          {/* Controls Panel */}
+          <section style={styles.card}>
+            <h2 style={styles.cardTitle}>CONFIGURATION</h2>
+            
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>1. Source Image</label>
+              <div style={styles.uploadBox}>
                 <input
                   type="file"
                   accept="image/png,image/jpeg"
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  className="block w-full text-sm text-purple-200 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-purple-500 file:to-pink-500 file:text-white hover:file:scale-105 file:transition-transform file:cursor-pointer cursor-pointer"
+                  style={styles.fileInput}
                 />
+                <div style={{ textAlign: "center", color: "#94a3b8" }}>
+                  {file ? file.name : "Click to select or drag image"}
+                </div>
               </div>
-              <p className="text-purple-300 text-sm mt-3">
-                💡 Clear handwritten digits work best
-              </p>
             </div>
 
-            <div>
-              <label className="block text-lg font-semibold text-purple-200 mb-3">
-                ⚡ Epsilon: {epsilon.toFixed(2)}
-              </label>
+            <div style={styles.inputGroup}>
+              <div style={styles.labelRow}>
+                <label style={styles.label}>2. Perturbation (ε)</label>
+                <span style={styles.epsilonValue}>{epsilon.toFixed(2)}</span>
+              </div>
               <input
                 type="range"
                 min="0"
@@ -150,120 +104,277 @@ export default function Home() {
                 step="0.01"
                 value={epsilon}
                 onChange={(e) => setEpsilon(Number(e.target.value))}
-                className="w-full h-2 bg-purple-900 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                style={styles.slider}
               />
-              <div className="flex gap-4 items-center mt-4">
-                <input
-                  type="number"
-                  min="0"
-                  max="0.4"
-                  step="0.01"
-                  value={epsilon}
-                  onChange={(e) => setEpsilon(Number(e.target.value))}
-                  className="w-32 px-4 py-2 bg-purple-900/50 border border-purple-500/30 rounded-lg text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <span className="text-purple-300 text-sm">Range: 0.00 – 0.40</span>
-              </div>
             </div>
-          </div>
 
-          <div className="mt-8 flex justify-center">
             <button
               onClick={runAttack}
               disabled={loading}
-              className={`relative px-10 py-4 rounded-full text-white font-bold text-lg overflow-hidden transition-all ${
-                loading
-                  ? "bg-gray-600 cursor-not-allowed"
-                  : "animated-bg hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50"
-              }`}
+              style={{
+                ...styles.button,
+                backgroundColor: loading ? "#334155" : "#3b82f6",
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
             >
-              <span className="relative z-10">
-                {loading ? "🔄 Attacking..." : "🚀 Launch Attack"}
-              </span>
+              {loading ? "EXECUTING ATTACK..." : "RUN ANALYSIS"}
             </button>
-          </div>
 
-          {error && (
-            <div className="mt-6 p-4 bg-red-500/20 border border-red-500 rounded-xl text-red-200 text-center font-semibold">
-              ⚠️ {error}
-            </div>
-          )}
+            {error && <div style={styles.errorBox}>⚠ {error}</div>}
+          </section>
+
+          {/* Results Area */}
+          <section style={{ ...styles.card, flex: 2 }}>
+            <h2 style={styles.cardTitle}>NEURAL RESPONSE</h2>
+            {!resp && !loading ? (
+              <div style={styles.emptyState}>Initialize an attack to see model results</div>
+            ) : (
+              <div style={{ opacity: loading ? 0.5 : 1, transition: "0.3s opacity" }}>
+                <div style={styles.resultsHeader}>
+                  <div style={styles.stat}>
+                    <span style={styles.statLabel}>Clean Pred</span>
+                    <span style={styles.statValue}>{resp?.clean_prediction ?? "?"}</span>
+                  </div>
+                  <div style={styles.stat}>
+                    <span style={{...styles.statLabel, color: "#f87171"}}>Adv Pred</span>
+                    <span style={{...styles.statValue, color: "#f87171"}}>{resp?.adversarial_prediction ?? "?"}</span>
+                  </div>
+                  {resp?.attack_success && (
+                    <div style={styles.successBadge}>SUCCESSFUL BREACH</div>
+                  )}
+                </div>
+
+                <div style={styles.imageGrid}>
+                  <div style={styles.imageContainer}>
+                    <p style={styles.imageLabel}>ORIGINAL INPUT</p>
+                    <div style={styles.imageWrapper}>
+                      {cleanPreviewUrl ? (
+                        <img src={cleanPreviewUrl} alt="Clean" style={styles.img} />
+                      ) : (
+                        <div style={styles.imagePlaceholder} />
+                      )}
+                    </div>
+                  </div>
+
+                  <div style={styles.imageContainer}>
+                    <p style={{...styles.imageLabel, color: "#60a5fa"}}>ADVERSARIAL OUTPUT</p>
+                    <div style={{...styles.imageWrapper, borderColor: "#3b82f666"}}>
+                      {advPreviewUrl ? (
+                        <img src={advPreviewUrl} alt="Adversarial" style={styles.img} />
+                      ) : (
+                        <div style={styles.imagePlaceholder} />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
         </div>
-
-        {resp && (
-          <div className="glass rounded-3xl p-8 glow-border animate-fade-in">
-            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 mb-6">
-              ✨ Attack Results
-            </h2>
-
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div className="glass rounded-2xl p-6 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-purple-200">Clean Prediction:</span>
-                  <span className="text-2xl font-bold text-green-400">{resp.clean_prediction}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-purple-200">Adversarial Prediction:</span>
-                  <span className="text-2xl font-bold text-orange-400">{resp.adversarial_prediction}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-purple-200">Attack Success:</span>
-                  <span className={`text-xl font-bold ${resp.attack_success ? 'text-red-400' : 'text-gray-400'}`}>
-                    {resp.attack_success ? '✅ YES' : '❌ NO'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-purple-200">Epsilon Used:</span>
-                  <span className="text-xl font-bold text-purple-400">{resp.epsilon}</span>
-                </div>
-              </div>
-
-              <div className="glass rounded-2xl p-6">
-                <div className="text-purple-200 font-semibold mb-2">🔗 Backend</div>
-                <div className="text-purple-300 text-sm break-all">{apiBase}</div>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="text-center">
-                <div className="text-xl font-bold text-purple-200 mb-4">🎯 Original Image</div>
-                {cleanPreviewUrl ? (
-                  <div className="relative inline-block">
-                    <img
-                      src={cleanPreviewUrl}
-                      alt="Original"
-                      className="w-64 h-64 object-contain border-4 border-purple-500 rounded-2xl shadow-2xl hover:scale-105 transition-transform"
-                      style={{ imageRendering: "pixelated" }}
-                    />
-                  </div>
-                ) : (
-                  <div className="text-purple-300">No image</div>
-                )}
-              </div>
-
-              <div className="text-center">
-                <div className="text-xl font-bold text-pink-400 mb-4">⚔️ Adversarial Image</div>
-                {advPreviewUrl ? (
-                  <div className="relative inline-block">
-                    <img
-                      src={advPreviewUrl}
-                      alt="Adversarial"
-                      className="w-64 h-64 object-contain border-4 border-pink-500 rounded-2xl shadow-2xl hover:scale-105 transition-transform"
-                      style={{ imageRendering: "pixelated" }}
-                    />
-                  </div>
-                ) : (
-                  <div className="text-purple-300">No adversarial image</div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        <footer className="text-center mt-12 text-purple-300 text-sm">
-          💫 FGSM success depends on input image and epsilon value. Experiment with different settings for optimal results.
-        </footer>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
+
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    minHeight: "100vh",
+    backgroundColor: "#0f172a",
+    color: "#f8fafc",
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    padding: "40px 20px",
+  },
+  wrapper: {
+    maxWidth: "1100px",
+    margin: "0 auto",
+  },
+  header: {
+    display: "flex",
+    alignItems: "center",
+    gap: "20px",
+    marginBottom: "40px",
+  },
+  logoBadge: {
+    width: "50px",
+    height: "50px",
+    backgroundColor: "#3b82f6",
+    borderRadius: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "24px",
+    boxShadow: "0 0 20px rgba(59, 130, 246, 0.4)",
+  },
+  title: {
+    fontSize: "28px",
+    fontWeight: 900,
+    letterSpacing: "-0.5px",
+    margin: 0,
+  },
+  subtitle: {
+    color: "#94a3b8",
+    margin: "4px 0 0 0",
+    fontSize: "15px",
+  },
+  mainGrid: {
+    display: "flex",
+    flexDirection: "row",
+    gap: "24px",
+    flexWrap: "wrap",
+  },
+  card: {
+    backgroundColor: "rgba(30, 41, 59, 0.5)",
+    border: "1px solid #334155",
+    borderRadius: "16px",
+    padding: "24px",
+    flex: 1,
+    minWidth: "320px",
+    backdropFilter: "blur(10px)",
+  },
+  cardTitle: {
+    fontSize: "12px",
+    fontWeight: 800,
+    letterSpacing: "1.5px",
+    color: "#3b82f6",
+    marginBottom: "24px",
+    borderBottom: "1px solid #334155",
+    paddingBottom: "10px",
+  },
+  inputGroup: {
+    marginBottom: "20px",
+  },
+  label: {
+    fontSize: "14px",
+    fontWeight: 600,
+    color: "#cbd5e1",
+    display: "block",
+    marginBottom: "8px",
+  },
+  uploadBox: {
+    border: "2px dashed #475569",
+    borderRadius: "12px",
+    padding: "20px",
+    position: "relative",
+    cursor: "pointer",
+    transition: "0.2s border-color",
+  },
+  fileInput: {
+    position: "absolute",
+    inset: 0,
+    opacity: 0,
+    cursor: "pointer",
+  },
+  labelRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  epsilonValue: {
+    fontFamily: "monospace",
+    backgroundColor: "#1e293b",
+    padding: "2px 8px",
+    borderRadius: "4px",
+    color: "#60a5fa",
+  },
+  slider: {
+    width: "100%",
+    marginTop: "10px",
+    cursor: "pointer",
+  },
+  button: {
+    width: "100%",
+    padding: "16px",
+    borderRadius: "12px",
+    border: "none",
+    color: "white",
+    fontWeight: 700,
+    fontSize: "14px",
+    transition: "0.2s transform active",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+  },
+  errorBox: {
+    marginTop: "16px",
+    color: "#f87171",
+    fontSize: "13px",
+    backgroundColor: "rgba(248, 113, 113, 0.1)",
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid rgba(248, 113, 113, 0.2)",
+  },
+  emptyState: {
+    height: "300px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#64748b",
+    fontStyle: "italic",
+    textAlign: "center",
+  },
+  resultsHeader: {
+    display: "flex",
+    gap: "20px",
+    marginBottom: "30px",
+    alignItems: "flex-end",
+    flexWrap: "wrap",
+  },
+  stat: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  statLabel: {
+    fontSize: "11px",
+    fontWeight: 700,
+    color: "#94a3b8",
+    textTransform: "uppercase",
+  },
+  statValue: {
+    fontSize: "32px",
+    fontWeight: 800,
+    fontFamily: "monospace",
+  },
+  successBadge: {
+    backgroundColor: "rgba(34, 197, 94, 0.1)",
+    color: "#4ade80",
+    padding: "4px 12px",
+    borderRadius: "20px",
+    fontSize: "12px",
+    fontWeight: 700,
+    border: "1px solid rgba(34, 197, 94, 0.2)",
+  },
+  imageGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "20px",
+  },
+  imageContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  imageLabel: {
+    fontSize: "11px",
+    fontWeight: 700,
+    color: "#64748b",
+  },
+  imageWrapper: {
+    backgroundColor: "#020617",
+    borderRadius: "12px",
+    overflow: "hidden",
+    border: "1px solid #334155",
+    aspectRatio: "1",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  img: {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+    imageRendering: "pixelated",
+  },
+  imagePlaceholder: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#0f172a",
+  },
+};
