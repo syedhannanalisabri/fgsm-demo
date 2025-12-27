@@ -17,21 +17,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          app_build_command: "npm run build"
           submodules: true
           lfs: false
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_ISLAND_0AC01F90F }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "./frontend" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "out" # Built app content directory - optional
+          ###### Repository/Build Configurations ######
+          app_location: "./frontend" 
+          api_location: "" 
+          output_location: "out" 
+          # FIXED: This must be inside the 'with' section of static-web-apps-deploy
+          app_build_command: "npm run build" 
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
@@ -45,7 +46,3 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_ISLAND_0AC01F90F }}
           action: "close"
-
-
-
-
