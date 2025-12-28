@@ -17,7 +17,7 @@ export default function Home() {
   const [resp, setResp] = useState<AttackResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const apiBase = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+  const apiBase = "https://fgsm-backend-syedh-01.azurewebsites.net";
 
   const cleanPreviewUrl = useMemo(() => {
     if (!file) return null;
