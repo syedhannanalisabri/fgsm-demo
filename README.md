@@ -244,25 +244,17 @@ The deployment includes:
 - **Azure with Docker**: Backend hosting
 - **Azure**: Frontend hosting
 
-## 📚 Resources
+## Resources
 
 ### Academic Papers
 - [Explaining and Harnessing Adversarial Examples](https://arxiv.org/abs/1412.6572) (Goodfellow et al., 2015)
-- [Adversarial Examples Are Not Easily Detected](https://arxiv.org/abs/1705.07263)
-
-### Additional Reading
-- [Adversarial Robustness Toolbox](https://github.com/Trusted-AI/adversarial-robustness-toolbox)
-- [CleverHans: Python Library for Adversarial Examples](https://github.com/cleverhans-lab/cleverhans)
 
 
 
 
-## 📧 Contact
 
-Syed Hannan Ali Sabri - [GitHub](https://github.com/syedhannanalisabri)
 
-Project Link: [https://github.com/syedhannanalisabri/fgsm-demo](https://github.com/syedhannanalisabri/fgsm-demo)
 
----
 
-**Note**: This project is for educational purposes only. Adversarial attacks should only be used for research and improving model robustness, not for malicious purposes.
+
+
